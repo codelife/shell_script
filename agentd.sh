@@ -1,5 +1,6 @@
 #/bin/bash
-zabbix_server="180.168.101.77,180.168.101.76"
+#zabbix server's ip address
+zabbix_server="192.168.1.11"
 if [ $UID -ne 0 ];then
 echo "you are not root $su -"
 exit 1 
