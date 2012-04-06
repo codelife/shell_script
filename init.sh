@@ -35,7 +35,7 @@ iptables-restore < /etc/sysconfig/iptables
 #########
 #ulimit
 #########
-echo -e "   *   hard   nofile 102400\n   *   soft   nofile 102400\n" >> /etc/security/limits.conf
+echo -e "   *   hard   core 0\n   *   soft   core 0\n    *   hard   nproc 65535\n   *   soft   nproc 65535\n   *   hard   nofile 102400\n   *   soft   nofile 102400\n" >> /etc/security/limits.conf
 #######################
 #user
 #######################
