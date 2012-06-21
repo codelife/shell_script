@@ -10,6 +10,7 @@ if [ $? -eq 0 ];then
     exit 1;
 fi
 
+echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" >> /etc/resolv.conf 
 sed -i '/^#Port/a\\Port='$ssh_port'' /etc/ssh/sshd_config
 sed -i '/^#PermitRootLogin/a\\PermitRootLogin no\nMaxAuthTries 2\n' /etc/ssh/sshd_config
 sed -i 's/\<22\>/'$ssh_port'/' /etc/sysconfig/iptables
@@ -46,8 +47,52 @@ sed -i '/^PATH/a\\PATH=$PATH:/usr/kerberos/sbin:/usr/local/sbin:/usr/sbin:/sbin\
 killall ntpd
 rm /etc/localtime
 ln -s /usr/share/zoneinfo/Asia/Shanghai  /etc/localtime
+echo -e "
+export HISTTIMEFORMAT='%F %T '
+export HISTSIZE=5000
+export HISTCONTROL=ignoredups
+export HISTIGNORE=\"pwd:ls:date:shutdown -h now:\"
+alias  rm='rm -f'
+" >> /etc/bashrc
+echo "UseDNS no" >> /etc/ssh/sshd_config
+iptables -I INPUT  -j ACCEPT
+########################sys kernel adjust##########################
+echo "
+net.ipv4.tcp_timestamps = 0
+net.ipv4.tcp_syncookies = 0
+net.ipv4.tcp_max_tw_buckets = 6000
+net.ipv4.tcp_rmem = 4096        87380   4194304
+net.ipv4.tcp_wmem = 4096        16384   4194304
+net.core.netdev_max_backlog = 262144
+net.core.somaxconn = 262144
+net.ipv4.tcp_max_orphans = 3276800
+net.ipv4.tcp_max_syn_backlog = 262144
+net.ipv4.tcp_synack_retries = 3
+net.ipv4.tcp_syn_retries = 2
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_mem = 94500000 915000000 927000000
+net.ipv4.tcp_fin_timeout = 10
+net.ipv4.tcp_keepalive_time = 1200
+net.ipv4.ip_local_port_range = 1024    65000
+" >> /etc/sysctl.conf
+sed -i '/net.ipv4.tcp_syncookies = 1/d'  /etc/sysctl.conf
+sysctl -p
+
+chkconfig cups off
+chkconfig portmap off
+chkconfig nfslock off
+chkconfig rpcbind off
+/etc/init.d/cups stop
+####################################以下需要网络操作#############################
 yum -y check-update
 yum -y install ntp
+if [ $? -eq 0 ];then
+    :
+else
+    echo "please confirm the server is connect to internet"
+    exit 1
+fi
 ntpdate time.stdtime.gov.tw
 if [ $? -eq 0 ];then
     hwclock -w
@@ -57,14 +102,6 @@ fi
 /etc/init.d/ntpd start
 chkconfig ntpd on
 yum -y install gcc automake expect  make
-echo -e "
-export HISTTIMEFORMAT='%F %T '
-export HISTSIZE=5000
-export HISTCONTROL=ignoredups
-export HISTIGNORE=\"pwd:ls:ls -ltr:ls -l:date:\"
-alias  rm='rm -f'
-" >> /etc/bashrc
-iptables -I INPUT  -j ACCEPT
 expect -c "
         set timeout 5;
         spawn passwd $new_user
@@ -72,15 +109,15 @@ expect -c "
         sleep 3;
         expect \" password:\" { send \"$password\r\";};
         expect eof;"
-/etc/init.d/sshd restart
-echo "重启过sshd后,使用新的用户和端口登录,若在机房登录后,删除iptables中允许任意ip登录的规则"
-chkconfig cups off
-chkconfig portmap off
-chkconfig nfslock off
-chkconfig rpcbind off
-/etc/init.d/cups stop
-wget http://zabbix.seegame.com/vim.tar.gz
-tar xzvf vim.tar.gz
-tar xzvf vim.tar.gz -C /home/$new_user/
-chown -R $new_user. /home/$new_user/
-echo -e "nameserver 8.8.8.8\nnameserver 8.8.4.4" >> /etc/resolv.conf 
+
+if [ $? -eq 0 ];then
+    /etc/init.d/sshd restart
+    echo "重启过sshd后,使用新的用户和端口登录,若在机房登录后,删除iptables中允许任意ip登录的规则"
+else
+    echo "请手动更改gamemanager密码,然后重启sshd"
+fi
+
+
+
+
+
