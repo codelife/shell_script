@@ -1,0 +1,167 @@
+12. Information and Statistics
+12.1 lastlog
+List the last login time of all system users. This references the /var/log/lastlog file.
+12.2 losf
+List open files. This command outputs a detailed table of all currently open files and gives
+information about their owner, size, the processes associated with them, and more. Of course, lsof
+may be piped to grep and/or awk to parse and analyze its results.
+lsof -an -i tcp
+12.3 strace
+System trace: diagnostic and debugging tool for tracing system calls and signals. This command and
+ltrace, following, are useful for diagnosing why a given program or package fails to run . . . perhaps
+due to missing libraries or related causes.
+#trace df
+12.4 ltrace
+#ltrace df
+Library trace: diagnostic and debugging tool that traces library calls invoked by a given command.
+12.5 nmap
+Network mapper and port scanner. This command scans a server to locate open ports and the services
+associated with those ports. It can also report information about packet filters and firewalls. This is an
+important security tool for locking down a network against hacking attempts.
+12.6 nc
+The nc (netcat) utility is a complete toolkit for connecting to and listening to TCP and UDP ports. It is
+useful as a diagnostic and testing tool and as a component in simple script-based HTTP clients and
+servers.
+12.7 lsdev
+List devices, that is, show installed hardware
+12.8 dmesg 
+Lists all system bootup messages to stdout. Handy for debugging and ascertaining which device
+drivers were installed and which system interrupts in use. The output of dmesg may, of course, be
+parsed with grep, sed, or awk from within a script.
+12.9 stat
+Gives detailed and verbose statistics on a given file (even a directory or device file) or set of files.
+12.10 vmstat
+Display virtual memory statistics.
+12.11 uptime
+Shows how long the system has been running, along with associated statistics.
+12.12 sar
+Invoking sar (System Activity Reporter) gives a very detailed rundown on system statistics
+12.13 size
+The size [/path/to/binary] command gives the segment sizes of a binary executable or archive file.
+This is mainly of use to programmers. 
+#size /bin/bash
+12.14 logrotat
+This utility manages the system log files, rotating, compressing, deleting, and/or e-mailing them, as
+appropriate. This keeps the /var/log from getting cluttered with old log files. Usually cron runs
+logrotate on a daily basis.
+Adding an appropriate entry to /etc/logrotate.conf makes it possible to manage personal log
+files, as well as system-wide ones.
+13. Job Control
+13.1 pgrep pkill
+Combining the ps command with grep or kill.
+13.2 pstree
+Lists currently executing processes in "tree" format. The -p option shows the PIDs, as well as the
+process names.
+13.3 top
+Continuously updated display of most cpu-intensive processes. The -b option displays in text mode,
+so that the output may be parsed or accessed from a script.
+13.4 nohup
+Keeps a command running even after user logs off. The command will run as a foreground process
+unless followed by &. If you use nohup within a script, consider coupling it with a wait to avoid
+creating an orphan or zombie process.
+13.5 pidof
+Identifies process ID (PID) of a running job. Since job control commands, such as kill and renice act
+on the PID of a process (not its name), it is sometimes necessary to identify that PID. The pidof
+command is the approximate counterpart to the $PPID internal variable.
+13.6 fuser
+Identifies the processes (by PID) that are accessing a given file, set of files, or directory. May also be
+invoked with the -k option, which kills those processes. This has interesting implications for system
+security, especially in scripts preventing unauthorized users from accessing system services.
+#bash$ fuser -um /dev/usbdrive
+The fuser command, invoked with the -n option identifies the processes accessing a port. This is
+especially useful in combination with nmap. 
+#fuser -un tcp 25
+13.7 init
+The init command is the parent of all processes. Called in the final step of a bootup, init determines
+the runlevel of the system from /etc/inittab. Invoked by its alias telinit, and by root only.
+14. Network
+14.1 ifconfig
+The ifconfig command is most often used at bootup to set up the interfaces, or to shut them down
+when rebooting.
+14.2 iwconfig
+This is the command set for configuring a wireless network. It is the wireless equivalent of ifconfig,
+above.
+14.3 ip
+General purpose utility for setting up, changing, and analyzing IP (Internet Protocol) networks and
+attached devices. This command is part of the iproute2 package.
+14.4 route
+Show info about or make changes to the kernel routing table.
+14.5 tcpdump
+Network packet "sniffer." This is a tool for analyzing and troubleshooting traffic on a network by
+dumping packet headers that match specified criteria.
+Dump ip packet traffic between hosts bozoville and caduceus:
+#tcpdump ip host bozoville and caduceus
+15. Filesystem
+15.1 mount
+Mount a filesystem, usually on an external device, such as a floppy or CDROM. The file
+/etc/fstab provides a handy listing of available filesystems, partitions, and devices, including
+options, that may be automatically or manually mounted. The file /etc/mtab shows the currently
+mounted filesystems and partitions (including the virtual ones, such as /proc).
+15.2 sync
+Forces an immediate write of all updated data from buffers to hard drive (synchronize drive with
+buffers). While not strictly necessary, a sync assures the sys admin or user that the data just changed
+will survive a sudden power failure. In the olden days, a sync; sync (twice, just to make
+absolutely sure) was a useful precautionary measure before a system reboot.
+15.3 mkswap
+Creates a swap partition or file. The swap area must subsequently be enabled with swapon
+15.4 swapon swapoff
+Enable / disable swap partitition or file. These commands usually take effect at bootup and shutdown.
+15.5 mke2fs
+Create a Linux ext2 filesystem. This command must be invoked as root.
+15.6 dumpe2fs
+Dump (list to stdout) very verbose filesystem info. This must be invoked as root.
+15.7 fdisk
+15.8 fsck  e2fsck  debugfs
+Filesystem check, repair, and debug command set.
+fsck: a front end for checking a UNIX filesystem (may invoke other utilities). The actual filesystem
+type generally defaults to ext2.
+e2fsck: ext2 filesystem checker.
+debugfs: ext2 filesystem debugger. One of the uses of this versatile, but dangerous command is to
+(attempt to) recover deleted files. For advanced users only!
+All of these should be invoked as root, and they can damage or destroy a filesystem if misused
+15.9 lsusb  usbmodules
+The lsusb command lists all USB (Universal Serial Bus) buses and the devices hooked up to them.
+The usbmodules command outputs information about the driver modules for connected USB devices.
+15.10 lspci
+Lists pci busses present.
+15.11 mkbootdisk
+Creates a boot floppy which can be used to bring up the system if, for example, the MBR (master boot
+record) becomes corrupted. Of special interest is the --iso option, which uses mkisofs to create a
+bootable ISO9660 filesystem image suitable for burning a bootable CDR.
+16. System Resources
+16.1 ulimit
+Sets an upper limit on use of system resources. Usually invoked with the -f option, which sets a limit
+on file size (ulimit -f 1000 limits files to 1 meg maximum). The -t option limits the coredump
+size (ulimit -c 0 eliminates coredumps). Normally, the value of ulimit would be set in
+/etc/profile and/or ~/.bash_profile (see Appendix G)
+16.2 quota setquota
+Display user or group disk quotas.
+setquota --Set user or group disk quotas from the command-line.
+16.3 umask
+User file creation permissions mask. Limit the default file attributes for a particular user. All files
+created by that user take on the attributes specified by umask. The (octal) value passed to umask
+17. Modules
+17.1 lsmod
+List installed kernel modules.
+17.2 insmod
+Force installation of a kernel module (use modprobe instead, when possible). Must be invoked as
+root.
+17.3 rmmod
+Force unloading of a kernel module. Must be invoked as root.
+17.4 modprobe
+Module loader that is normally invoked automatically in a startup script. Must be invoked as root.
+17.5 depmod
+Creates module dependency file. Usually invoked from a startup script.
+17.6 modinfo
+Output information about a loadable module.
+17.7 ldd
+Show shared lib dependencies for an executable file.
+18. Miscellaneous
+18.1 watch
+Run a command repeatedly, at specified time intervals.
+The default is two-second intervals, but this may be changed with the -n option
+
+
+
+
+

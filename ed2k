@@ -1,0 +1,2 @@
+#!/bin/bash
+echo "$1" | sed -e 's/%25\([0-9A-F][0-9A-F]\)/%\1/g' | xargs -n1 /usr/bin/ed2k

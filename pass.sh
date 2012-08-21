@@ -8,5 +8,6 @@ expect -c "
         expect \"UNIX password:\" { send \"$password\r\";};
         sleep 2;
         expect \"UNIX password:\" { send \"$password\r\";};
-        expect eof;"
-
+        expect eof;
+    interact
+        "

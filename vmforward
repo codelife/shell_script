@@ -1,0 +1,22 @@
+#!/bin/bash
+#VBoxManage modifyvm "VM name" --natpf1 "guestssh,tcp,,2222,,22"
+#With the above example, all TCP traffic arriving on port 2222 on any host interface will be forwarded to port 22 in the guest. The protocol name tcp is a mandatory attribute defining which protocol should be used for forwarding (udp could also be used). The name guestssh is purely descriptive and will be auto-generated if omitted. The number after --natpf denotes the network card, like in other parts of VBoxManage.
+#VBoxManage modifyvm "VM name" --natpf1 delete "guestssh"
+#If for some reason the guest uses a static assigned IP address not leased from the built-in DHCP server, it is required to specify the guest IP when registering the forwarding rule:
+#VBoxManage modifyvm "VM name" --natpf1 "guestssh,tcp,,2222,10.0.2.19,22"
+#This example is identical to the previous one, except that the NAT engine is being told that the guest can be found at the 10.0.2.19 address.
+name_script=`basename $0`
+    echo $name_script
+if [ "name_script" = "vf9" ];then
+    echo $name_script
+VBoxManage modifyvm "Ubuntu-8.04-Web" --natpf1 delete "guestssh"
+VBoxManage modifyvm "Ubuntu-9.04-Web" --natpf1 "guestssh,tcp,,2222,,22"
+VBoxManage modifyvm "Ubuntu-9.04-Web" --natpf1 "guestweb,tcp,,80,,80"
+VBoxManage modifyvm "Ubuntu-9.04-Web" --natpf1 "guestcat,tcp,,8080,,8080"
+fi
+if [ "name_script" = "vf8" ];then
+VBoxManage modifyvm "Ubuntu-9.04-Web" --natpf1 delete "guestssh"
+VBoxManage modifyvm "Ubuntu-8.04-Web" --natpf1 "guestssh,tcp,,2222,,22"
+VBoxManage modifyvm "Ubuntu-8.04-Web" --natpf1 "guestweb,tcp,,80,,80"
+VBoxManage modifyvm "Ubuntu-8.04-Web" --natpf1 "guestcat,tcp,,8080,,8080"
+fi

@@ -1,0 +1,26 @@
+#!/bin/bash
+#use for change the gateway.add the path of the file  to the $PATH 
+CT="192.168.0.11"
+UN="192.168.0.2"
+exec 2> /dev/null ;
+route -n | tail -1
+read  CH;
+flag=`grep "$CT" /etc/network/interfaces`;
+if [ -z $CH]
+then
+    if [ -z $flag ]
+    then
+        sudo sed -i 's/'$UN'/'$CT'/' /etc/network/interfaces ;
+        sudo /etc/init.d/networking restart;
+        sudo route del default gw $UN ;
+        echo "The current gateway is $CT"
+    else
+        sudo sed -i 's/'$CT'/'$UN'/' /etc/network/interfaces ;
+        sudo /etc/init.d/networking restart;
+        sudo route del default gw $CT ;
+        echo "The current gateway is $UN"
+    fi
+else
+    echo nothing changed;
+    exit 0;
+fi
