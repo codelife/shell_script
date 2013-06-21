@@ -39,6 +39,7 @@ fi
 
   rpm -Uvh http://mirrors.ustc.edu.cn/fedora/epel/6/i386/epel-release-6-8.noarch.rpm
   rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+  rpm -Uvh http://apt.sw.be/redhat/el6/en/x86_64/rpmforge/RPMS/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm 
   yum check-update
   yum -y install gcc automake expect screen gcc-g++ ntpd wget unzip man vim
 
