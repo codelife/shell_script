@@ -15,6 +15,8 @@ fi
     sed -i '/^#Port/a\\Port='$ssh_port'' /etc/ssh/sshd_config
     sed -i '/^#PermitRootLogin/a\\PermitRootLogin no\nMaxAuthTries 2\n' /etc/ssh/sshd_config
     sed -i 's/\<22\>/'$ssh_port'/' /etc/sysconfig/iptables
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
+    setenforce 0
     echo "
         *filter
         :INPUT ACCEPT [0:0]
