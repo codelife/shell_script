@@ -55,6 +55,7 @@ fi
     export HISTIGNORE=\"pwd:ls:ls -l:date:\"
     alias  rm='rm -f'
     " >> /etc/bashrc
+    source /etc/bashrc
     echo "
     #network optimiz
     net.ipv4.tcp_syncookies = 1
@@ -77,7 +78,8 @@ fi
     net.ipv4.tcp_rmem  = 32768 436600 873200
     # TCP读buffer
     net.ipv4.tcp_mem = 94500000 91500000 92700000
-    "
+    " >> /etc/sysctl.conf
+    sysctl -p
     
 #}
 
