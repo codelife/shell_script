@@ -80,6 +80,7 @@ fi
     net.ipv4.tcp_rmem  = 32768 436600 873200
     # TCP读buffer
     net.ipv4.tcp_mem = 94500000 91500000 92700000
+    vm.swappiness = 1 
     " >> /etc/sysctl.conf
     sysctl -p
     
