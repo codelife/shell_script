@@ -1,8 +1,8 @@
 #/bin/bash
 #在新安装的CentOS机器上执行此脚本,对eth1完全开放,对192.168.100.0/24开放.
 ssh_port=9527                  #ssh的新端口
-new_user="yl9527"              #添加新用户
-password="yourpasswd"          #新用户密码
+new_user="jp2014"              #添加新用户
+password="rage@2014"          #新用户密码
 company_ip="123456"
 grep -iq  "$new_user:x" /etc/passwd
 if [ $? -eq 0 ];then
@@ -13,9 +13,9 @@ fi
 #{ iptables setting
 
     sed -i '/^#Port/a\\Port='$ssh_port'' /etc/ssh/sshd_config
+    sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
     sed -i '/^#PermitRootLogin/a\\PermitRootLogin no\nMaxAuthTries 2\n' /etc/ssh/sshd_config
     sed -i 's/\<22\>/'$ssh_port'/' /etc/sysconfig/iptables
-    sed -i 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
     setenforce 0
     echo "
         *filter
