@@ -2,13 +2,13 @@
 root="/home/web/"
 declare -a domain_list=(91coco.net)
 for domain in $domain_list ;do 
-    #重命名不存在同名htm的文件为html文件
+    #閲嶅懡鍚嶄笉瀛樺湪鍚屽悕htm鐨勬枃浠朵负html鏂囦欢
     for filename in `find ${root}${domain} -name "*.htm"`;do
         if [ ! -e ${filename}l ];then
             mv ${filename} ${filename}l
         fi
     done
-    #修改所有链接为htm文件为html结尾文件
+    #淇敼鎵�鏈夐摼鎺ヤ负htm鏂囦欢涓篽tml缁撳熬鏂囦欢
     for filename in `find ${root}${domain} -name "*.htm*"`;do
         sed -i 's/\.htm\>/.html/' $filename
     done
